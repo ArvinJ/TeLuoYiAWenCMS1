@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+    <title>课件管理</title>
+    <link href="${request.contextPath}/static/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/css/4.0.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/color-default.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/css/themify-icons.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/css/jquery.mmenu.all.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/css/jquery.mmenu.widescreen.css" type="text/css" rel="stylesheet" media="all and (min-width: 900px)">
+    <link href="${request.contextPath}/static/css/jquery.mCustomScrollbar.min.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/css/switch.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/css/select2.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/css/icheck-blue.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/css/tree.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/css/multi-select.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/css/bootstrap-dialog.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/css/bootstrapValidator.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="${request.contextPath}/static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/jquery.mmenu.min.all.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/statice/js/main.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/jquery.mousewheel.min.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/jquery.mCustomScrollbar.min.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/switch.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/icheck.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/select2.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/jquery.ztree.core-3.5.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/jquery.ztree.exedit-3.5.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/module.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/uploader.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/bootstrap-paginator.min.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/simpler-sidebar.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/jquery-sliding-menu.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/bootstrap-dialog.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/bootstrapValidator.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/common.js"></script>
+
+    [#-- freemarker 宏定义 --]
+    [#macro displayTransformStatus status]
+        [#if status??]
+            [#if status == "1"]
+                转换成功
+            [#elseif status == "0"]
+                转换中
+            [#elseif status == "-1"]
+                转换失败
+            [/#if]
+        [/#if]
+    [/#macro]
+
+</head>
+<body>
+<div id="mainScroll">
+
+    <div class="content">
+        <div class="panel" >
+            <div class="panel-heading">课件管理</div>
+            <div class="panel-body">
+                <!-- Tables -->
+                <form name="coursewareSearchForm" id="coursewareSearchForm" action="/cms/controller/courseware/search" method="post">
+                    <input type="hidden" name="collapse" value="${collapse!}">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3 col-sm-3">
+                            <div class="input-group search">
+                                <input type="text" class="form-control" id="coursewareCodeOrName" name="coursewareCodeOrName" maxlength="50" value="${coursewareCodeOrName?html}" placeholder="输入课件编号或名称">
+                              <span class="input-group-btn">
+                                    <button class="btn" onclick="searchCourseware();" style="height: 30px;"><span class="ti-search" ></span></button>
+                              </span>
+                            </div><!-- /input-group -->
+                        </div>
+                        <div class="col-lg-6 col-md-5 col-sm-4">
+                            <a class="font-12 btn btn-link" data-toggle="collapse" href="#collapse_searchMore" aria-expanded="false" aria-controls="collapseExample">更多筛选条件<span class="ti-angle-double-down"></span></a>
+                        </div>
+                        <div class="col-lg-3 col-md-4 col-sm-5 text-right">
+                            <!-- 下拉按钮 -->
+                            <div class="dropdown pull-right">
+                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="false">
+                                    <span class="ti-settings"></span>&nbsp;批量操作
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" style="cursor: pointer" onclick="batchDelete()"><span class="ti-trash"></span>&nbsp;删除</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" style="cursor: pointer" onclick="batchOpen('1')"><span class="ti-stamp"></span>&nbsp;共享课件</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" style="cursor: pointer" onclick="batchOpen('0')"><span class="ti-stamp"></span>&nbsp;取消共享</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" style="cursor: pointer" onclick="exportCourseware()"><span class="ti-export"></span>&nbsp;导出</a></li>
+                                </ul>
+                            </div>
+                            <button class="btn btn-blue" type="button" onclick="add();"><span class="ti-plus"></span>&nbsp;新增</button>&nbsp;&nbsp;
+                        </div>
+                    </div>
+                    <div class="collapse" id="collapse_searchMore">
+                        <div class="form-horizontal well" role="form">
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    <label for="deviceType" class="control-label col-lg-4 col-md-6 col-sm-5 text-left">支持设备：</label>
+                                    <div class="col-lg-8 col-md-6 col-sm-7">
+                                        <select id="deviceType" name="deviceType" style="width:100%;" class="select2">
+                                            <option value="" selected>全部</option>
+                                            <option value="PC" [#if deviceType="PC"]selected[/#if]>PC</option>
+                                            <option value="MOBILE" [#if deviceType="MOBILE"]selected[/#if]>移动</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    <label for="fileType" class="control-label col-lg-4 col-md-6 col-sm-5 text-left">课件类型：</label>
+                                    <div class="col-lg-8 col-md-6 col-sm-7">
+                                        <select id="fileType" name="fileType" style="width:100%;" class="select2">
+                                            <option value="" selected>全部</option>
+                                            <option value="SCORM包" [#if fileType="SCORM包"]selected[/#if]>SCORM包</option>
+                                            <option value="课程包" [#if fileType="课程包"]selected[/#if]>课程包</option>
+                                            <option value="视频" [#if fileType="视频"]selected[/#if]>视频</option>
+                                            <option value="文档" [#if fileType="文档"]selected[/#if]>文档</option>
+                                            <option value="录播课程" [#if fileType="录播课程"]selected[/#if]>录播课程</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    <label for="open" class="control-label col-lg-4 col-md-6 col-sm-5 text-left">是否共享：</label>
+                                    <div class="col-lg-8 col-md-6 col-sm-7" >
+                                        <select id="open" name="open" style="width:100%;" class="select2">
+                                            <option value="" selected>全部</option>
+                                            <option value="1" [#if open="1"]selected[/#if]>是</option>
+                                            <option value="0" [#if open="0"]selected[/#if]>否</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    <label for="transformStatus" class="control-label col-lg-4 col-md-6 col-sm-5 text-left">转换状态：</label>
+                                    <div class="col-lg-8 col-md-6 col-sm-7" >
+                                        <select id="transformStatus" name="transformStatus" style="width:100%;" class="select2">
+                                            <option value="" selected>全部</option>
+                                            <option value="1" [#if "${(courseware.transformStatus)!}"=="1"]selected[/#if]>转换成功</option>
+                                            <option value="0" [#if "${(courseware.transformStatus)!}"=="0"]selected[/#if]>转换中</option>
+                                            <option value="-1" [#if "${(courseware.transformStatus)!}"=="-1"]selected[/#if]>转换失败</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label col-lg-4 col-md-6 col-sm-5 text-left">&nbsp;</label>
+                                    <div class="col-lg-8 col-md-6 col-sm-7">
+                                        <button onclick="searchCourseware();" class="btn btn-blue">开始筛选</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </form>
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered">
+                        <thead>
+                        <tr>
+                            <th><input type="checkbox" name="ckAll" id="ckAll" onclick="checkboxAll();"></th>
+                            <th>序号</th>
+                            <th>课件编号</th>
+                            <th>课件名称</th>
+                            <th>课件类型</th>
+                            <th>时长(分钟)</th>
+                            <th>支持终端</th>
+                            <th>是否共享</th>
+                            <th>转换状态</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        [#if coursewares?size == 0]
+                        <tr>
+                            <td colspan="10" style="vertical-align:middle;">
+                                <h4 class="text-center"><small>没有找到相关数据</small></h4>
+                            </td>
+                        </tr>
+                        [/#if]
+                        [#list coursewares as courseware]
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="ckSub" value="${courseware.id}">
+                            </td>
+                            <td>${pageFirst+courseware_index}</td>
+                            <td>${courseware.code}</td>
+                            <td>${courseware.name}</td>
+                            <td>${courseware.fileType}</td>
+                            <td>${courseware.duration}</td>
+                            <td>
+                                [#if courseware.deviceType?contains("PC") && courseware.deviceType?contains("MOBILE")]
+                                PC/移动
+                                [#elseif courseware.deviceType?contains("PC")]
+                                PC
+                                [#elseif courseware.deviceType?contains("MOBILE")]
+                                移动
+                                [/#if]
+                            </td>
+                            <td>${(courseware.open)?string("是","否")}</td>
+                            <td>[@displayTransformStatus (courseware.transformStatus)! /]</td>
+                            <td>
+                                <button class="btn btn-link" data-toggle="tooltip" data-placement="top" title="" data-original-title="修改" onclick="edit('${courseware.id}');"><span class="ti-pencil-alt"></span></button>
+                                <button class="btn btn-link" data-toggle="tooltip" data-placement="top" title="删除" onclick="delCourseware('${courseware.id}');"><span class="ti-trash"></span></button>
+                            </td>
+                        </tr>
+                        [/#list]
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="blank-10"></div>
+                <div id="pageDiv" style="text-align: right">
+                    <ul id="pageLimit"></ul>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<form name="coursewareListForm" id="coursewareListForm" action="" method="post"></form>
+
+</body>
+
+</html>
+
+<script type="text/javascript">
+
+    $(function(){
+        //带搜索下拉
+        $(".select2").select2({
+            minimumResultsForSearch: Infinity
+        });
+
+        // icheck
+        $("input[name='ckAll'],input[name='ckSub']").iCheck({
+            checkboxClass: "icheckbox_minimal-blue",
+            radioClass: "iradio_minimal-blue",
+            increaseArea: "20%" // optional
+        });
+
+        //黑色工具提示
+        $('button[data-toggle="tooltip"]').tooltip();
+
+        $("#mainScroll").mCustomScrollbar({theme:"dark-thin",scrollInertia:300});
+        $.mCustomScrollbar.defaults.axis="yx"; //默认支持横向和纵向滚动条
+        $("#collapse_searchMore").collapse("${collapse!}");
+
+    });
+
+    function batchOpen(status) {
+        var coursewareIds = getSelectIds("ckSub");
+        if(coursewareIds == "") {
+            BootstrapDialog.alert({title:"信息",message:"请选择一条或多条记录！",buttonLabel:"确定"});
+            return;
+        }
+        var form = document.coursewareListForm;
+        form.action = "/cms/controller/courseware/batchOpen?coursewareIds="+coursewareIds+"&open="+status;
+        form.submit();
+    }
+
+    function exportCourseware() {
+        var searchStr = $("#coursewareSearchForm").serialize();
+        var coursewareIds = getSelectIds("ckSub");
+        searchStr = searchStr + "&coursewareIds=" + coursewareIds;
+        var form = document.coursewareListForm;
+        form.target = "_blank";
+        form.action = "/cms/controller/courseware/export?"+searchStr;
+        form.submit();
+    }
+
+    function edit(id) {
+        location.href ="${request.contextPath}/controller/courseware/edit?coursewareId="+id;
+    }
+
+    function add() {
+        location.href ="${request.contextPath}/controller/courseware/edit";
+    }
+
+    function batchDelete() {
+        var coursewareIds = getSelectIds("ckSub");
+        if(coursewareIds == "") {
+            BootstrapDialog.alert({title:"信息",message:"请选择一条或多条记录！",buttonLabel:"确定"});
+            return;
+        }
+        BootstrapDialog.confirm({
+            title:'信息',
+            message:'确认删除选中的记录吗？',
+            btnCancelLabel: "取消",
+            btnOKLabel: "确定",
+            callback: function(result) {
+                if (result) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/cms/controller/courseware/batchDelete",
+                        data: {coursewareIds: coursewareIds},
+                        success: function (data) {
+                            if (data == "SUCCESS") {
+                                window.location.href = '/cms/controller/courseware/search';
+                            } else if (data == "FAILED") {
+                                BootstrapDialog.alert({title: "信息", message: "删除失败！", buttonLabel: "确定"});
+                            }
+                        }
+                    });
+                } else {
+                    return;
+                }
+            }
+        });
+    }
+
+    function delCourseware(coursewareId) {
+        BootstrapDialog.confirm({
+            title:'信息',
+            message:'确认删除当前记录吗？',
+            btnCancelLabel: "取消",
+            btnOKLabel: "确定",
+            callback: function(result) {
+                if (result) {
+                    $.ajax({
+                        dataType: "html",
+                        type: "POST",
+                        url: "/cms/controller/courseware/delete",
+                        data: {coursewareId: coursewareId},
+                        success: function (data) {
+                            if (data == "SUCCESS") {
+                                window.location.href = '/cms/controller/courseware/search';
+                            } else if (data == "FAILED") {
+                                BootstrapDialog.alert({title: "信息", message: "删除失败！", buttonLabel: "确定"});
+                                return;
+                            }
+                        }
+                    });
+                } else {
+                    return;
+                }
+            }
+        });
+    }
+
+    function searchCourseware() {
+        var collapse = $("#collapse_searchMore").is(":hidden") ? "hide" : "show";
+        $("input[name='collapse']").val(collapse);
+        $("#coursewareSearchForm").submit();
+    }
+
+    // iCheck的全选与反选
+    $("#ckAll").on("ifChecked", function(event){
+        $("input:checkbox[name='ckSub']").iCheck("check");
+    });
+    $("#ckAll").on("ifUnchecked", function(event){
+        $("input:checkbox[name='ckSub']").iCheck("uncheck");
+    });
+
+    // 分页信息
+    var totalPages = ${(pageLimit.totalPages)!0};
+    var total = ${(pageLimit.total)!0};
+    var pageNo = ${(pageLimit.pageNo)!0};
+    var pageSize = ${(pageLimit.pageSize)!0};
+    if(totalPages > 1) {
+        pageLimit(total, pageNo, pageSize, totalPages);
+    }
+
+    function pageLimit(total, currentPage, pageSize, totalPages) {
+        var options = {
+            currentPage: currentPage,
+            totalPages: totalPages,
+            numberOfPages: 5,
+            bootstrapMajorVersion: 3,
+            itemTexts: function (type, page, current) {
+                switch (type) {
+                    case "first":
+                        return "首页";
+                    case "prev":
+                        return "上一页";
+                    case "next":
+                        return "下一页";
+                    case "last":
+                        return "尾页";
+                    case "page":
+                        return page;
+                }
+            },
+            tooltipTitles: function (type, page, current) {
+                switch (type) {
+                    case "first":
+                        return "首页";
+                    case "prev":
+                        return "上一页";
+                    case "next":
+                        return "下一页";
+                    case "last":
+                        return "尾页";
+                    case "page":
+                        return "第"+page+"页";
+                }
+            },
+            onPageClicked: function (e, originalEvent, type, page) {
+                var searchStr = $("#coursewareSearchForm").serialize();
+                var form = document.coursewareSearchForm;
+                var collapse = $("#collapse_searchMore").is(":hidden") ? "hide" : "show";
+                $("input[name='collapse']").val(collapse);
+                form.action = "/cms/controller/courseware/search?searchStr&pageNo="+page+"&pageSize="+pageSize;
+                form.submit();
+            }
+        }
+        $("#pageLimit").bootstrapPaginator(options);
+    }
+
+
+
+</script>

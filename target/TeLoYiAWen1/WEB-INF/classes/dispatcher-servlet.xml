@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+    <!--spring aop 支持-->
+    <!--<aop:aspectj-autoproxy proxy-target-class="true"/>-->
+
+    <!-- 自动扫描的包名 -->
+    <context:component-scan base-package="com.lgq.demo"/>
+
+    <!-- 默认的注解映射的支持 -->
+    <mvc:annotation-driven/>
+
+    <mvc:view-controller path="/" view-name="forward:/main"/>
+
+    <!--对静态资源文件的访问 -->
+    <mvc:resources mapping="/static/images/**" location="/WEB-INF/static/images/"/>
+    <mvc:resources mapping="/static/css/**" location="/WEB-INF/static/css/"/>
+    <mvc:resources mapping="/static/js/**" location="/WEB-INF/static/js/"/>
+
+    <mvc:default-servlet-handler/>
+
+    <!-- Content Negotiating View Resolver -->
+    <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver" p:order="1">
+        <!-- 设置内容协商管理器 -->
+        <property name="contentNegotiationManager">
+            <bean  class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+                <!--这里是是否启用扩展名支持，默认就是true 例如  /user/{userid}.json-->
+                <property name="favorPathExtension" value="false" />
+                <property name="ignoreAcceptHeader" value="true"/>
+                <!--这里是是否启用参数支持，默认就是true 例如  /user/{userid}?format=json-->
+                <property name="favorParameter" value="false" />
+                <property name="defaultContentType" value="text/html" />
+                <property name="mediaTypes">
+                    <props>
+                        <prop key="html">text/html</prop>
+                        <prop key="json">application/json</prop>
+                        <prop key="xml">application/xml</prop>
+                    </props>
+                </property>
+            </bean>
+        </property>
+
+        <!-- 设置视图解析器 -->
+        <property name="viewResolvers">
+            <list>
+                <bean class="org.springframework.web.servlet.view.BeanNameViewResolver"/>
+                <bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+                    <property name="cache" value="false"/>
+                    <property name="contentType" value="text/html"/>
+                    <property name="prefix" value=""/>
+                    <property name="suffix" value=".html"/>
+                    <property name="exposeSpringMacroHelpers" value="true"/>
+                    <property name="requestContextAttribute" value="request"/>
+                </bean>
+            </list>
+        </property>
+        <!-- 设置默认视图 -->
+        <property name="defaultViews">
+            <list>
+                <bean id="defaultJsonView" class="org.springframework.web.servlet.view.json.MappingJacksonJsonView"/>
+            </list>
+        </property>
+    </bean>
+
+
+    <!-- 视图解释器 jsp -->
+    <bean id="viewResolverCommon" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/pages/"/>
+        <property name="suffix" value=".jsp"/>
+        <property name="viewClass" value="org.springframework.web.servlet.view.InternalResourceView"/>
+        <property name="order" value="1"/>
+    </bean>
+
+
+    <!-- 默认的视图解析器 在上边的解析错误时使用 (默认使用html)- -->
+    <bean id="fmViewResolver"
+          class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver" p:order="2">
+        <property name="viewClass" value="org.springframework.web.servlet.view.freemarker.FreeMarkerView"/>
+        <property name="viewNames" value="*.html" />
+        <property name="cache" value="true"/>
+        <property name="prefix" value="/WEB-INF/pages/"/>
+        <property name="suffix" value=".jsp"/>
+        <property name="contentType" value="text/html;charset=UTF-8"></property>
+        <property name="requestContextAttribute" value="request"/>
+        <property name="exposeSpringMacroHelpers" value="true"/>
+        <property name="exposeRequestAttributes" value="true"/>
+        <property name="exposeSessionAttributes" value="true"/>
+    </bean>
+
+
+    <!--freemarker参数配置-->
+    <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+        <property name="templateLoaderPath" value="/WEB-INF/pages"/>
+        <property name="freemarkerSettings">
+            <props>
+                <prop key="template_update_delay">0</prop>
+                <prop key="tag_syntax">square_bracket</prop>
+                <prop key="default_encoding">UTF-8</prop>
+                <prop key="number_format">0.##</prop>
+                <prop key="datetime_format">yyyy-MM-dd HH:mm:ss</prop>
+                <prop key="template_exception_handler">rethrow</prop>
+            </props>
+        </property>
+    </bean>
+
+
+    <!-- 支持上传文件 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="536870912"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
+
+
+</beans>

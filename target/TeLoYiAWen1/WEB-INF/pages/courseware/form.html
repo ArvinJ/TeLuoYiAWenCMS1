@@ -1,0 +1,231 @@
+<html>
+<head lang="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+    <title>课件维护</title>
+    <link href="${request.contextPath}/static/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/css/4.0.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/color-default.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/css/themify-icons.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/css/jquery.mmenu.all.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/css/jquery.mmenu.widescreen.css" type="text/css" rel="stylesheet" media="all and (min-width: 900px)">
+    <link href="${request.contextPath}/static/css/jquery.mCustomScrollbar.min.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/css/switch.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/css/select2.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/css/icheck-blue.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/css/tree.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/css/multi-select.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/css/bootstrap-dialog.css" rel="stylesheet" type="text/css">
+    <link href="${request.contextPath}/static/css/bootstrapValidator.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="${request.contextPath}/static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/jquery.mmenu.min.all.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/statice/js/main.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/jquery.mousewheel.min.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/jquery.mCustomScrollbar.min.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/switch.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/icheck.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/select2.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/jquery.ztree.core-3.5.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/jquery.ztree.exedit-3.5.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/module.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/uploader.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/bootstrap-paginator.min.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/simpler-sidebar.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/jquery-sliding-menu.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/bootstrap-dialog.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/bootstrapValidator.js"></script>
+    <script type="text/javascript" src="${request.contextPath}/static/js/common.js"></script>
+</head>
+<body>
+
+<div id="mainScroll">
+
+    <div class="content">
+        <div class="panel">
+            <div class="panel-heading">课件信息</div>
+            <div class="panel-body">
+                <form class="form-horizontal" name="coursewareEditForm" id="coursewareEditForm" action="/cms/controller/courseware/saveOrUpdate" method="post">
+                    <input type="hidden" id="coursewareId" name="coursewareId" value="${(courseware.id)!}">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"><span class="text-danger">*&nbsp;</span>课件编号：</label>
+                        <div class="col-sm-4">
+                            <input class="form-control" type="text" name="coursewareCode" id="coursewareCode" value="${(courseware.code)!}" placeholder="" maxlength="20">
+                        </div>
+                        <input type="hidden" name="coursewareCodeOld" id="coursewareCodeOld" value="${(courseware.code)!}" maxlength="20">
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"><span class="text-danger">*&nbsp;</span>课件名称：</label>
+                        <div class="col-sm-4">
+                            <input class="form-control" type="text" name="coursewareName" id="coursewareName" value="${(courseware.name)!}" placeholder="" maxlength="20">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"><span class="text-danger">*&nbsp;</span>时长(分钟)：</label>
+                        <div class="col-sm-4">
+                            <input class="form-control" type="text" name="duration" value="${(courseware.duration)!}" placeholder="" maxlength="10">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">课件类型：</label>
+                        <div class="col-sm-4">
+                            <select id="fileType" name="fileType" style="width:100%;">
+                                <option value="SCORM包" [#if "${(courseware.fileType)!}"=="SCORM包"]selected[/#if]>SCORM包</option>
+                                <option value="课程包" [#if "${(courseware.fileType)!}"=="课程包"]selected[/#if]>课程包</option>
+                                <option value="视频" [#if "${(courseware.fileType)!}"=="视频"]selected[/#if]>视频</option>
+                                <option value="文档" [#if "${(courseware.fileType)!}"=="文档"]selected[/#if]>文档</option>
+                                <option value="录播课程">录播课程</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" id="fileTypeDiv">
+                        <label class="col-sm-2 control-label">支持平台(多选)：</label>
+                        <div class="col-sm-10 row">
+                            <label class="checkbox-inline">
+                                <input type="checkbox" value="PC" name="deviceType" [#if ((courseware.deviceType)!'PC')?contains("PC")]checked[/#if]> PC
+                            </label>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" value="MOBILE" name="deviceType" [#if ((courseware.deviceType)!)?contains("MOBILE")]checked[/#if]> 移动
+                            </label>
+                            <small id="deviceTypeMsg" class="help-block" style="display: none">请选择支持设备</small>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">是否共享：</label>
+                        <div class="col-sm-4 row">
+                            <label class="radio-inline">
+                                <input type="radio" name="open" value="1" > 是
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="open" value="0" checked> 否
+                            </label>
+                        </div>
+                    </div>
+                    <div class="blank-20"></div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"></label>
+                        <div class="col-sm-8">
+                            <button type="button" class="btn btn-default btn-l"  onclick="backToMain();">返回</button>&nbsp;&nbsp;
+                            <button class="btn btn-success btn-l" type="submit">确认保存</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
+<script type="text/javascript">
+
+    $(function(){
+
+        // icheck
+        $("input").iCheck({
+            checkboxClass: "icheckbox_minimal-blue",
+            radioClass: "iradio_minimal-blue",
+            increaseArea: "20%" // optional
+        });
+
+        //黑色工具提示
+        $('button[data-toggle="tooltip"]').tooltip();
+
+        //带搜索下拉
+        $("select").select2({
+            minimumResultsForSearch: Infinity
+        });
+
+        //左侧导航滚动条
+        $("#mainScroll").mCustomScrollbar({
+            theme:"dark-thin"
+        });
+
+        // 控制页面控件的选中状态
+        $("#fileType option[value='${(courseware.fileType)!}']").attr("selected",true);
+        $("input[name='open'][value='${(courseware.open?string(1,0))!}']").iCheck('check');
+
+    });
+
+
+    $(function() {
+        $('#coursewareEditForm')
+            .bootstrapValidator({
+                fields: {
+                coursewareCode: {
+                    validators: {
+                        notEmpty: {
+                            message: '课件编号不能为空'
+                        },
+                        regexp: {
+                            regexp: /^[a-zA-Z0-9_]+$/,
+                            message: '课件编号只能包含字母数字和下划线'
+                        }
+                    }
+                },
+                coursewareName: {
+                    validators: {
+                        notEmpty: {
+                            message: '课件名称不能为空'
+                        }
+                    }
+                },
+                duration: {
+                    validators: {
+                        notEmpty: {
+                            message: '请填写时长'
+                        },
+                        regexp: {
+                            regexp: /^[1-9]+[0-9]*]*$/,
+                            message: '填写格式不正确'
+                        }
+                    }
+                },
+                deviceType: {
+                    validators: {
+                        choice: {
+                            min: 1,
+                            message: '至少选择一个支持设备'
+                        }
+                    }
+                }
+            },
+            submitHandler: function(validator, form, submitButton) {
+                var coursewareCode = $("#coursewareCode").val();
+                var coursewareCodeOld = $("#coursewareCodeOld").val();
+                if(coursewareCode != coursewareCodeOld) {
+                    $.post("/cms/controller/courseware/checkDuplicate", {coursewareCode:coursewareCode}, function(result) {
+                        if(result == "ERROR") {
+                            BootstrapDialog.alert({title: "信息", message: "课件编号重复！",buttonLabel : "确定"});
+                            $('#coursewareEditForm').bootstrapValidator('disableSubmitButtons', false);
+                            return false;
+                        } else {
+                            validator.defaultSubmit();
+                        }
+                    }, "text");
+                } else {
+                    validator.defaultSubmit();
+                }
+            }
+        })
+        .find('input[name="deviceType"]')
+        .on('ifChanged', function(e) {
+            var field = $(this).attr('name');
+            $('#coursewareEditForm').bootstrapValidator('updateStatus', field, 'NOT_VALIDATED')
+                    .bootstrapValidator('validateField', field);
+        });
+
+    });
+
+    function backToMain() {
+        location.href = "${request.contextPath}/controller/courseware/search";
+    }
+
+
+</script>
